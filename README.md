@@ -12,8 +12,8 @@ ___
 ### Collect necessary information 
 > 
 Home network IP : 10.0.0.1/24
-converter IP :eth0 10.0.0.222 :eth1  10.8.0.9/30 (will keep 2 segments Lab A and Lab B )
-Lab IP : 192.168.1.1/16
+converter IP :eth0 10.0.0.222/24 :eth1  10.10.0.9/24 (will keep 2 segments Lab A and Lab B )
+Lab IP : 192.168.1.1/24
 >
 
 **Note**: _the IP set should be kept different to avoid network conflicts_
@@ -38,8 +38,8 @@ set net.ipv4.ip_forward = 1
 ### IP for downlink gateway
 ___
 ```
-sudo ip addr add 10.10.0.1/30 dev eth0
-sudo ip link set eth0 up 
+sudo ip addr add 10.10.0.1/24 dev eth1
+sudo ip link set eth1 up 
 ```
 ___
 ### Configure NAT
@@ -48,15 +48,15 @@ Configure and install iptables
 >
 ```
  sudo apt install iptables
- sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
- sudo iptables -A FORWARD -i eth0 -o wlan0 -j ACCEPT
- sudo iptables -A FORWARD -i wlan0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+ sudo iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+ sudo iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
 ```
 
 ### Configure Secondary Router
 Configure secondary router such as
 >
-Router IP any ip withing the 10.10.0.1/30 subnet range
+Router IP any ip withing the 10.10.0.1/24 subnet range
 gateway will be the  ip of the eth0 we just set up 
 >
 ___
